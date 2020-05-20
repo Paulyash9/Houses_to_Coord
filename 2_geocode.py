@@ -3,7 +3,7 @@ import requests as req
 from settings import *
 
 
-def take_coords(address):
+def take_coords(address):  # парсим коодинаты из адресов
     response = req.get(f'https://geocode-maps.yandex.ru/1.x/?apikey={API}&geocode={address}&format=json').json()
     if response['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found'] is '0':
         return 'None None'
@@ -12,7 +12,7 @@ def take_coords(address):
         return response
 
 
-def coords_to_df(city):
+def coords_to_df(city):  # формируем таблицу из адресов и координат
     houses = pd.read_excel(f'houses_{city}.xlsx', sheet_name='Sheet1', index_col=0)
     lon = list()
     lat = list()
@@ -28,7 +28,7 @@ def coords_to_df(city):
         completed += 1
         if completed % 100 == 0:
             print(f'{completed} из {len(houses)}')
-            backup_file(lon, lat)
+            backup_file(lon, lat)  # делается бэкап на всякий случай
         if completed == len(houses):
             print(f'{completed} из {len(houses)}')
     houses['lon'] = lon
@@ -53,5 +53,5 @@ def create_file(city):
 
 if __name__ == '__main__':
     create_file(city)
-    print('File created')
     save_file(city, coords_to_df(city))
+    print(f'Сохранено в parsed_{city}.txt')
