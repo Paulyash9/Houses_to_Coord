@@ -4,22 +4,33 @@ from bs4 import BeautifulSoup
 from settings import *
 
 
-def take_streets():
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                             'Chrome/81.0.4044.129 Safari/537.36 '}
+def take_region(reg_url):
+    response = req.get(f'http://www.ifias.ru{reg_url}', headers=headers)
+    region = BeautifulSoup(response.content, 'lxml').find('h2').text
+    region = region.split()[0]
+    return region
+
+
+def take_streets_oktmo():
     response = req.get(url, headers=headers)
-    soup = BeautifulSoup(response.content, 'lxml').find_all('a', href=True, title=True)
+    soup = BeautifulSoup(response.content, 'lxml')
+    links = soup.find_all('a', href=True, title=True)
+    region = take_region(soup.find('a', title="обл")['href'])
+    region_num = soup.find('a', title='обл').text
+    city = soup.find('title').text.split(',')[0]
+    oktmo = soup.find('p', title=f'Общероссийский классификатор территорий муниципальных образований для {city}').text.split()[1]
+
+    # исключение лишних данных при парсинге (при необходимости добавить)
+    exclude = ('На главную', 'Главная', 'ФНС РФ', city, region, region_num)
 
     all_streets = dict()
-    for street in soup:
+    for street in links:
         if street.text not in exclude:
             all_streets[street.text] = street['href']
-    return all_streets
+    return all_streets, oktmo, city
 
 
-def take_houses(street_url):  # парсим дома
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                             'Chrome/81.0.4044.129 Safari/537.36 '}
+def take_houses(street_url, oktmo):  # парсим дома
     response = req.get(street_url, headers=headers)
     soup = BeautifulSoup(response.content, 'lxml').find_all('td')
 
@@ -32,7 +43,7 @@ def take_houses(street_url):  # парсим дома
     for i in range(len(soup)):
         if soup[i].text is no_houses:
             break
-        if soup[i].text in exclude_oktmo and soup[i].text is not '':
+        if soup[i].text in oktmo and soup[i].text is not '':
             for n in range(1, 4):
                 if exclude_2 in soup[i - n].text:
                     break
@@ -62,11 +73,11 @@ def to_excel():
     completed = 0
 
     # парсим улицы
-    streets = take_streets()
+    streets, oktmo, city = take_streets_oktmo()
 
     # парсим дома
     for street, street_url in streets.items():
-        list_of_houses[street] = take_houses(street_url)
+        list_of_houses[street] = take_houses(street_url, oktmo)
         completed += 1
         print(f'{completed} из {len(streets.keys())}')
 

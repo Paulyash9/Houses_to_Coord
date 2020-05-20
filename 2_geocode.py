@@ -1,6 +1,13 @@
 import pandas as pd
 import requests as req
+from bs4 import BeautifulSoup
 from settings import *
+
+
+def take_city():
+    response = req.get(url, headers=headers)
+    city = BeautifulSoup(response.content, 'lxml').find('title').text.split(' Город')[0]
+    return city
 
 
 def take_coords(address):  # парсим коодинаты из адресов
@@ -36,6 +43,11 @@ def coords_to_df(city):  # формируем таблицу из адресов
     return houses
 
 
+def create_file(city):
+    with open(f'parsed_{city}.txt', 'w', encoding='utf-8') as file:
+        file.write('city_name,geometry_name,building_name,lon,lat\n')
+
+
 def backup_file(lon, lat):
     df = pd.DataFrame(list(zip(lon, lat)),
                       columns=['lon', 'lat'])
@@ -46,12 +58,8 @@ def save_file(city, df):
     df.to_csv(f'parsed_{city}.txt', header=False, sep=',', mode='a')
 
 
-def create_file(city):
-    with open(f'parsed_{city}.txt', 'w', encoding='utf-8') as file:
-        file.write('city_name,geometry_name,building_name,lon,lat\n')
-
-
 if __name__ == '__main__':
+    city = take_city()
     create_file(city)
     save_file(city, coords_to_df(city))
     print(f'Сохранено в parsed_{city}.txt')
