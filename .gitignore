@@ -1,0 +1,8 @@
+/venv/
+/test.py
+.idea/
+Completed/
+__pycache__/
+1_streets_and_houses_obl.py
+*.zip
+*settings.py

@@ -18,7 +18,8 @@ def take_streets_oktmo():
     region = take_region(soup.find('a', title="обл")['href'])
     region_num = soup.find('a', title='обл').text
     city = soup.find('title').text.split(',')[0]
-    oktmo = soup.find('p', title=f'Общероссийский классификатор территорий муниципальных образований для {city}').text.split()[1]
+    oktmo = soup.find('p', title=f'Общероссийский классификатор '
+                                 f'территорий муниципальных образований для {city}').text.split()[1]
 
     # исключение лишних данных при парсинге (при необходимости добавить)
     exclude = ('На главную', 'Главная', 'ФНС РФ', city, region, region_num)
