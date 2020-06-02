@@ -23,7 +23,6 @@ def coords_to_df():  # формируем таблицу из адресов и 
         completed = 0
         count = check_count(houses)
         if count:
-            create_file()
             for row in range(Start_from, End):  # по городам/районам
                 for key, lvl0 in houses[row].items():  # по улицам/поселкам
                     for key1, lvl1 in lvl0.items():
@@ -82,24 +81,17 @@ def check_count(houses):
         return count if answer is 'y' else False
 
 
-def create_file():
-    with open(f'parsed_{Region} ({Start_from}-{End}).txt', 'w', encoding='utf-8') as file:
-        file.write('city_name,geometry_name,building_name,lon,lat\n')
-    with open(f'backup_parsed_{Region} ({Start_from}-{End}).txt', 'w', encoding='utf-8') as file:
-        file.write('city_name,geometry_name,building_name,lon,lat\n')
-
-
 def backup_file(geocode, completed, count):
     df = pd.DataFrame(geocode, columns=['city_name', 'geometry_name', 'building_name', 'lon', 'lat'])
-    df.to_csv(f'backup_parsed_{Region} ({Start_from}-{End}).txt', index=False, header=False, sep=',', mode='w')
+    df.to_csv(f'backup_parsed_{Region} ({Start_from}-{End-1}).txt', index=False, sep=',', mode='w')
     print(f'Бэкап {completed} записей из {count}')
 
 
 def save_file(geocode):
     if geocode is not None:
         df = pd.DataFrame(geocode, columns=['city_name', 'geometry_name', 'building_name', 'lon', 'lat'])
-        df.to_csv(f'parsed_{Region} ({Start_from}-{End}).txt', header=False, sep=',', mode='a')
-        print(f'Сохранено в parsed_{Region}({Start_from}-{End}).txt')
+        df.to_csv(f'parsed_{Region} ({Start_from}-{End-1}).txt', index=False, sep=',', mode='w')
+        print(f'Сохранено в parsed_{Region}({Start_from}-{End-1}).txt')
 
 
 if __name__ == '__main__':
