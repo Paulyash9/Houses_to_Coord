@@ -91,7 +91,7 @@ def create_file():
 
 def backup_file(geocode, completed, count):
     df = pd.DataFrame(geocode, columns=['city_name', 'geometry_name', 'building_name', 'lon', 'lat'])
-    df.to_csv(f'backup_parsed_{Region} ({Start_from}-{End}).txt', index=False, header=False, sep=',', mode='a')
+    df.to_csv(f'backup_parsed_{Region} ({Start_from}-{End}).txt', index=False, header=False, sep=',', mode='w')
     print(f'Бэкап {completed} записей из {count}')
 
 
