@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import requests as req
+from streets_and_houses import take_region
 from settings import *
 
 
@@ -14,7 +15,7 @@ def take_coords(address):  # парсим коодинаты из адресов
 
 
 def coords_to_df():  # формируем таблицу из адресов и координат
-    with open(f'parsed_{Region}.json', 'r', encoding='utf-8') as file:
+    with open(f'parsed {Region}.json', 'r', encoding='utf-8') as file:
         houses = json.load(file)
     if End > len(houses):
         raise ValueError(f'"End" is out of range, max range is {len(houses)}. Change value of "End"')
@@ -83,35 +84,36 @@ def check_count(houses):
 
 def backup_file(geocode, completed, count):
     df = pd.DataFrame(geocode, columns=['city_name', 'geometry_name', 'building_name', 'lon', 'lat'])
-    df.to_csv(f'backup_parsed_{Region} ({Start_from}-{End-1}).txt', index=False, sep=',', mode='w')
+    df.to_csv(f'backup_parsed {Region} ({Start_from}-{End - 1}).txt', index=False, sep=',', mode='w')
     print(f'Бэкап {completed} записей из {count}')
 
 
 def save_file(geocode):
     if geocode is not None:
         df = pd.DataFrame(geocode, columns=['city_name', 'geometry_name', 'building_name', 'lon', 'lat'])
-        df.to_csv(f'parsed_{Region} ({Start_from}-{End-1}).txt', index=False, sep=',', mode='w')
-        print(f'Сохранено в parsed_{Region}({Start_from}-{End-1}).txt')
+        df.to_csv(f'parsed {Region} ({Start_from}-{End - 1}).txt', index=False, sep=',', mode='w')
+        print(f'Сохранено в parsed_{Region}({Start_from}-{End - 1}).txt')
 
 
 if __name__ == '__main__':
-
-    # указывается область (для названия файла и поиска в яндекс.картах)
-    Region = 'Ульяновская_обл'
+    Region = take_region()
 
     # указывается именно город. В конечном файле с координатами в city_name указывается город (по согласованию с
     # Анатолием)
-    City = 'Ульяновск'
+    City = 'Орел'
 
     # с какого города/района по порядку начинать парсить(начиная с 0)
-    Start_from = 1
+    Start_from = 0
 
     # до какого города по порядку парсить (если указать None, то будет парсить до самого конца)
-    End = 4
+    End = 1
 
     if End is None:
-        with open(f'parsed_{Region}.json', 'r', encoding='utf-8') as file:
+        with open(f'parsed {Region}.json', 'r', encoding='utf-8') as file:
             houses = json.load(file)
         End = len(houses)
 
-    save_file(coords_to_df())
+    if Start_from < End:
+        save_file(coords_to_df())
+    if Start_from >= End:
+        raise ValueError('Start_from >= End')

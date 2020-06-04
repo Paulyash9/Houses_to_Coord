@@ -3,7 +3,7 @@
 
 
 1. Ввести данные в файл settings.py
-2. Запустить 1_streets_and_houses.py
-3. Проверить данные в созданном Excel файле houses_{city}.xlsx
-4. Если все верно - запустить 2_geocode.py
-5. На выходе получается файл parsed_{city}.txt
+2. Запустить streets_and_houses.py
+3. Данные запишутся в файл .json
+4. Запустить geocode.py
+5. На выходе получается файл .txt в формате city_name,geometry_name,building_name,lon,lat
