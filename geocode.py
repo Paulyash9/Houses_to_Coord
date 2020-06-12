@@ -14,17 +14,17 @@ def take_coords(address):  # парсим коодинаты из адресов
         return response
 
 
-def coords_to_df():  # формируем таблицу из адресов и координат
+def coords_to_json():  # формируем таблицу из адресов и координат
     with open(f'parsed {Region}.json', 'r', encoding='utf-8') as file:
         houses = json.load(file)
-    if End > len(houses):
+    if End-1 > len(houses):
         raise ValueError(f'"End" is out of range, max range is {len(houses)}. Change value of "End"')
     else:
         geocode = list()
         completed = 0
         count = check_count(houses)
         if count:
-            for row in range(Start_from, End):  # по городам/районам
+            for row in range(Start_from, End-1):  # по городам/районам
                 for key, lvl0 in houses[row].items():  # по улицам/поселкам
                     for key1, lvl1 in lvl0.items():
                         if type(lvl1) is list:
@@ -34,7 +34,7 @@ def coords_to_df():  # формируем таблицу из адресов и 
                                     x, y = take_coords(address).split(' ')
                                 except AttributeError:
                                     x, y = take_coords(address)[0]
-                                geocode.append([City, key1, i, x, y])
+                                geocode.append([key, key1, i, x, y])
                                 completed += 1
                                 backup_file(geocode, completed, count) if completed % 100 == 0 else 0
                         else:
@@ -46,7 +46,7 @@ def coords_to_df():  # формируем таблицу из адресов и 
                                             x, y = take_coords(address).split(' ')
                                         except AttributeError:
                                             x, y = take_coords(address)[0]
-                                        geocode.append([City, key2, i, x, y])
+                                        geocode.append([key1, key2, i, x, y])
                                         completed += 1
                                         backup_file(geocode, completed, count) if completed % 100 == 0 else 0
                                 else:
@@ -58,7 +58,7 @@ def coords_to_df():  # формируем таблицу из адресов и 
                                                     x, y = take_coords(address).split(' ')
                                                 except AttributeError:
                                                     x, y = take_coords(address)[0]
-                                                geocode.append([City, key3, i, x, y])
+                                                geocode.append([key2, key3, i, x, y])
                                                 completed += 1
                                                 backup_file(geocode, completed, count) if completed % 100 == 0 else 0
             return geocode
@@ -66,7 +66,7 @@ def coords_to_df():  # формируем таблицу из адресов и 
 
 def check_count(houses):
     count = 0
-    for a in range(Start_from, End):
+    for a in range(Start_from, End-1):
         for lv1 in houses[a].values():
             for lv2 in lv1.values():
                 if type(lv2) is list:
@@ -98,15 +98,11 @@ def save_file(geocode):
 if __name__ == '__main__':
     Region = take_region()
 
-    # указывается именно город. В конечном файле с координатами в city_name указывается город (по согласованию с
-    # Анатолием)
-    City = 'Орел'
-
     # с какого города/района по порядку начинать парсить(начиная с 0)
     Start_from = 0
 
-    # до какого города по порядку парсить (если указать None, то будет парсить до самого конца)
-    End = 1
+    # до какого города ВКЛЮЧИТЕЛЬНО по порядку парсить (если указать None, то будет парсить до самого конца)
+    End = None
 
     if End is None:
         with open(f'parsed {Region}.json', 'r', encoding='utf-8') as file:
@@ -114,6 +110,6 @@ if __name__ == '__main__':
         End = len(houses)
 
     if Start_from < End:
-        save_file(coords_to_df())
+        save_file(coords_to_json())
     if Start_from >= End:
         raise ValueError('Start_from >= End')

@@ -83,7 +83,7 @@ def count(completed, value):
 
 if __name__ == '__main__':
     completed = 0
-    Region = take_region(url)
+    Region = take_region()
     Filename = f'parsed {Region}.json'
 
     """сбор данных"""

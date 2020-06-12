@@ -3,7 +3,11 @@
 .idea/
 Completed/
 __pycache__/
+datas
 *.zip
 *settings.py
 *parsed*
 *.txt
+txt
+parsed_Ульяновская_обл full.txt
+*.csv
