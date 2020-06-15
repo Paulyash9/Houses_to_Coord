@@ -34,13 +34,16 @@ def check_count():
         raise ValueError(f'в {region} всего {len(data)} городов/районов. Уменьшите значение End')
     for a in range(Start_from, End - 1):
         for lv1 in data[a].values():
-            for lv2 in lv1.values():
-                if type(lv2) is list:
-                    count += len(lv2)
-                else:
-                    for lv3 in lv2.values():
-                        if type(lv3) is list:
-                            count += len(lv3)
+            if type(lv1) is list:
+                count += len(lv1)
+            else:
+                for lv2 in lv1.values():
+                    if type(lv2) is list:
+                        count += len(lv2)
+                    else:
+                        for lv3 in lv2.values():
+                            if type(lv3) is list:
+                                count += len(lv3)
     return f'В {End - Start_from} городах/районах расположено {count} адресов'
 
 
