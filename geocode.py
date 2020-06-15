@@ -26,6 +26,16 @@ def coords_to_json():  # формируем таблицу из адресов �
         if count:
             for row in range(Start_from, End-1):  # по городам/районам
                 for key, lvl0 in houses[row].items():  # по улицам/поселкам
+                    if type(lvl0) is list:
+                        for i in lvl0:
+                            address = f"{Region}+{key}+{i}"
+                            try:
+                                x, y = take_coords(address).split(' ')
+                            except AttributeError:
+                                x, y = take_coords(address)[0]
+                            geocode.append([key, '', i, x, y])
+                            completed += 1
+                            backup_file(geocode, completed, count) if completed % 100 == 0 else 0
                     for key1, lvl1 in lvl0.items():
                         if type(lvl1) is list:
                             for i in lvl1:
