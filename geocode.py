@@ -68,13 +68,16 @@ def check_count(houses):
     count = 0
     for a in range(Start_from, End-1):
         for lv1 in houses[a].values():
-            for lv2 in lv1.values():
-                if type(lv2) is list:
-                    count += len(lv2)
-                else:
-                    for lv3 in lv2.values():
-                        if type(lv3) is list:
-                            count += len(lv3)
+            if type(lv1) is list:
+                count += len(lv1)
+            else:
+                for lv2 in lv1.values():
+                    if type(lv2) is list:
+                        count += len(lv2)
+                    else:
+                        for lv3 in lv2.values():
+                            if type(lv3) is list:
+                                count += len(lv3)
     if count < 25000:
         return count
     else:
