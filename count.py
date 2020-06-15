@@ -42,7 +42,7 @@ def check_count(start, end):
 
 
 if __name__ == '__main__':
-    start = 0
-    end = 22
-    print(check_count(start, end))
+    Start_from = 0
+    End = 23
+    print(check_count(Start_from, End))
     #print(all_count())
