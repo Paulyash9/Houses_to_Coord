@@ -107,7 +107,7 @@ if __name__ == '__main__':
     if End is None:
         with open(f'parsed {Region}.json', 'r', encoding='utf-8') as file:
             houses = json.load(file)
-        End = len(houses)
+        End = len(houses)+1
 
     if Start_from < End:
         save_file(coords_to_json())
