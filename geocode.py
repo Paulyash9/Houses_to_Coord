@@ -33,44 +33,46 @@ def coords_to_json():  # формируем таблицу из адресов �
                                 x, y = take_coords(address).split(' ')
                             except AttributeError:
                                 x, y = take_coords(address)[0]
-                            geocode.append([key, '', i, x, y])
+                            geocode.append([Region, key, i, x, y])
                             completed += 1
                             backup_file(geocode, completed, count) if completed % 100 == 0 else 0
-                    for key1, lvl1 in lvl0.items():
-                        if type(lvl1) is list:
-                            for i in lvl1:
-                                address = f"{Region}+{key}+{key1}+{i}"
-                                try:
-                                    x, y = take_coords(address).split(' ')
-                                except AttributeError:
-                                    x, y = take_coords(address)[0]
-                                geocode.append([key, key1, i, x, y])
-                                completed += 1
-                                backup_file(geocode, completed, count) if completed % 100 == 0 else 0
-                        else:
-                            for key2, lvl2 in lvl1.items():
-                                if type(lvl2) is list:
-                                    for i in lvl2:
-                                        address = f"{Region}+{key}+{key1}+{key2}+{i}"
-                                        try:
-                                            x, y = take_coords(address).split(' ')
-                                        except AttributeError:
-                                            x, y = take_coords(address)[0]
-                                        geocode.append([key1, key2, i, x, y])
-                                        completed += 1
-                                        backup_file(geocode, completed, count) if completed % 100 == 0 else 0
-                                else:
-                                    for key3, lvl3 in lvl2.items():
-                                        if type(lvl3) is list:
-                                            for i in lvl3:
-                                                address = f"{Region}+{key}+{key1}+{key2}+{key3}+{i}"
-                                                try:
-                                                    x, y = take_coords(address).split(' ')
-                                                except AttributeError:
-                                                    x, y = take_coords(address)[0]
-                                                geocode.append([key2, key3, i, x, y])
-                                                completed += 1
-                                                backup_file(geocode, completed, count) if completed % 100 == 0 else 0
+                    else:
+                        for key1, lvl1 in lvl0.items():
+                            if type(lvl1) is list:
+                                for i in lvl1:
+                                    address = f"{Region}+{key}+{key1}+{i}"
+                                    try:
+                                        x, y = take_coords(address).split(' ')
+                                    except AttributeError:
+                                        x, y = take_coords(address)[0]
+                                    geocode.append([key, key1, i, x, y])
+                                    completed += 1
+                                    backup_file(geocode, completed, count) if completed % 100 == 0 else 0
+                            else:
+                                for key2, lvl2 in lvl1.items():
+                                    if type(lvl2) is list:
+                                        for i in lvl2:
+                                            address = f"{Region}+{key}+{key1}+{key2}+{i}"
+                                            try:
+                                                x, y = take_coords(address).split(' ')
+                                            except AttributeError:
+                                                x, y = take_coords(address)[0]
+                                            geocode.append([key1, key2, i, x, y])
+                                            completed += 1
+                                            backup_file(geocode, completed, count) if completed % 100 == 0 else 0
+                                    else:
+                                        for key3, lvl3 in lvl2.items():
+                                            if type(lvl3) is list:
+                                                for i in lvl3:
+                                                    address = f"{Region}+{key}+{key1}+{key2}+{key3}+{i}"
+                                                    try:
+                                                        x, y = take_coords(address).split(' ')
+                                                    except AttributeError:
+                                                        x, y = take_coords(address)[0]
+                                                    geocode.append([key2, key3, i, x, y])
+                                                    completed += 1
+                                                    backup_file(geocode, completed, count) if completed % 100 == 0 \
+                                                        else 0
             return geocode
 
 
@@ -104,8 +106,8 @@ def backup_file(geocode, completed, count):
 def save_file(geocode):
     if geocode is not None:
         df = pd.DataFrame(geocode, columns=['city_name', 'geometry_name', 'building_name', 'lon', 'lat'])
-        df.to_csv(f'parsed {Region} ({Start_from}-{End - 1}).txt', index=False, sep=',', mode='w')
-        print(f'Сохранено в parsed_{Region}({Start_from}-{End - 1}).txt')
+        df.to_csv(f'parsed {Region} ({Start_from}-{End}).txt', index=False, sep=',', mode='w')
+        print(f'Сохранено в parsed_{Region}({Start_from}-{End}).txt')
 
 
 if __name__ == '__main__':
@@ -115,7 +117,7 @@ if __name__ == '__main__':
     Start_from = 0
 
     # до какого города ВКЛЮЧИТЕЛЬНО по порядку парсить (если указать None, то будет парсить до самого конца)
-    End = None
+    End = 850
 
     if End is None:
         with open(f'parsed {Region}.json', 'r', encoding='utf-8') as file:
