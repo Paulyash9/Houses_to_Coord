@@ -4,20 +4,21 @@ import requests as req
 import unicodedata as ud
 from bs4 import BeautifulSoup
 from settings import *
+from datetime import datetime
 
 
 def take_region():
-    response = req.get(url, headers=headers)
+    response = SESSION.get(base_url, headers=headers)
     region = BeautifulSoup(response.content, 'lxml').find('h1').text.split(', ')[0]
     return region
 
 
-def take_links(url=url):  # сбор ссылок со страницы
-    response = req.get(f'https://фиас.онлайн/{url}', headers=headers)
+def take_links(url=base_url):  # сбор ссылок со страницы
+    response = SESSION.get(f'https://фиас.онлайн{url}', headers=headers)
     soup = BeautifulSoup(response.content, 'lxml').find_all('div', class_="col-md-3 col-sm-6")
     links = dict()
     for i in soup:
-        links[ud.normalize("NFKD", i.find('a').text.replace(u'\xa0', u' '))] = i.find('a')['href'][1:]
+        links[ud.normalize("NFKD", i.find('a').text.replace(u'\xa0', u' '))] = i.find('a').get('href')
 
     if len(links.keys()) > 0:
         for key, value in links.items():
@@ -29,7 +30,7 @@ def take_links(url=url):  # сбор ссылок со страницы
 
 
 def take_houses(street):  # сбор домов со страницы
-    response = req.get(f'https://фиас.онлайн/{street}', headers=headers)
+    response = SESSION.get(f'https://фиас.онлайн{street}', headers=headers)
     soup = BeautifulSoup(response.content, 'lxml')
     soup = soup.find_all('a', href=True, rel=False, class_=False)
     houses = list()
@@ -40,17 +41,17 @@ def take_houses(street):  # сбор домов со страницы
 
 
 def first_parse():  # сбор ссылок со страницы
-    response = req.get(url, headers=headers)
+    response = SESSION.get(base_url, headers=headers)
     soup = BeautifulSoup(response.content, 'lxml').find_all('div', class_="col-md-3 col-sm-6")
     links = dict()
     for i in soup:
-        links[ud.normalize("NFKD", i.find('a').text.replace(u'\xa0', u' '))] = i.find('a')['href'][1:]
+        links[ud.normalize("NFKD", i.find('a').text.replace(u'\xa0', u' '))] = i.find('a').get('href')
     return links
 
 
 def check_file(settlement):
     try:
-        with open(Filename, 'r', encoding='utf-8') as file:
+        with open(FILENAME, 'r', encoding='utf-8') as file:
             opened_file = json.load(file)
         for i in opened_file:
             if settlement in i.keys():
@@ -58,7 +59,7 @@ def check_file(settlement):
                 return False
         return True
     except (FileNotFoundError, json.decoder.JSONDecodeError):
-        with open(Filename, 'w', encoding='utf-8') as file:
+        with open(FILENAME, 'w', encoding='utf-8') as file:
             file.close()
         return True
 
@@ -66,12 +67,12 @@ def check_file(settlement):
 def save_file(data, settlement):
     save_data = {settlement: data}
     try:
-        with open(Filename, 'r', encoding='utf-8') as file:
+        with open(FILENAME, 'r', encoding='utf-8') as file:
             exist_data = list(json.load(file))
     except json.decoder.JSONDecodeError:
         exist_data = list()
     exist_data.append(save_data)
-    with open(Filename, 'w', encoding='utf-8') as file:
+    with open(FILENAME, 'w', encoding='utf-8') as file:
         json.dump(exist_data, file, indent=4, ensure_ascii=False)
 
 
@@ -82,9 +83,11 @@ def count(completed, value):
 
 
 if __name__ == '__main__':
+    start = datetime.now()
     completed = 0
-    Region = take_region()
-    Filename = f'parsed {Region}.json'
+    SESSION = req.Session()
+    REGION = take_region()
+    FILENAME = f'parsed {REGION}.json'
 
     """сбор данных"""
     # 1. с области собираем ссылки на ГОРОДА и РАЙОНЫ
@@ -99,3 +102,5 @@ if __name__ == '__main__':
             completed = count(completed, len(data.keys()))
         else:
             completed = count(completed, len(data.keys()))
+    stop = datetime.now() - start
+    print(f"Выполнено за {stop}")
