@@ -15,7 +15,7 @@ folium==0.11.0
 html5lib==1.1
 idna==2.9
 jdcal==1.4.1
-Jinja2==2.11.2
+Jinja2==2.11.3
 lxml==4.6.2
 MarkupSafe==1.1.1
 multidict==5.1.0
