@@ -6,8 +6,10 @@ __pycache__/
 datas
 *.zip
 *settings.py
-*parsed*
+parsed*
 *.txt
 txt
 parsed_Ульяновская_обл full.txt
 *.csv
+/streets_and_houses_session_test.py
+/streets_and_houses_v2.py

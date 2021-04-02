@@ -15,8 +15,7 @@ folium==0.11.0
 html5lib==1.1
 idna==2.9
 jdcal==1.4.1
-Jinja2==2.11.2
-lxml==4.6.2
+Jinja2>=2.11.3
 MarkupSafe==1.1.1
 multidict==5.1.0
 numpy==1.19.3
@@ -27,7 +26,6 @@ pluggy==0.13.1
 py==1.10.0
 pycparser==2.20
 pyparsing==2.4.7
-pytest==6.2.1
 python-dateutil==2.8.1
 pytz==2020.1
 requests==2.23.0
@@ -38,3 +36,4 @@ urllib3==1.25.9
 webencodings==0.5.1
 xlrd==1.2.0
 yarl==1.6.3
+dadata~=20.7.0

@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import requests as req
 
-from settings import API
+from settings import *
 from streets_and_houses import take_region
 
 
@@ -17,20 +17,20 @@ def take_coords(address):  # парсим коодинаты из адресов
 
 def json_data():
     with open('parsed {0}.json'.format(Region), 'r', encoding='utf-8') as check_end_file:
-        houses = json.load(check_end_file)
-    return houses
+        house_numbers = json.load(check_end_file)
+    return house_numbers
 
 
-def coords_to_json(houses):  # формируем таблицу из адресов и координат
-    if End - 1 > len(houses):
-        raise ValueError('"End" is out of range, max range is {0}. Change value of "End"'.format(len(houses)))
+def coords_to_json(house_numbers):  # формируем таблицу из адресов и координат
+    if End - 1 > len(house_numbers):
+        raise ValueError('"End" is out of range, max range is {0}. Change value of "End"'.format(len(house_numbers)))
     else:
         geocode = list()
         completed = 0
-        count = check_count(houses)
+        count = check_count(house_numbers)
         if count:
             for row in range(Start_from, End - 1):  # по городам/районам
-                for key, lvl0 in houses[row].items():  # по улицам/поселкам
+                for key, lvl0 in house_numbers[row].items():  # по улицам/поселкам
                     if isinstance(lvl0, list):
                         for i in lvl0:
                             address = "Россия+{0}+{1}+{2}".format(Region, key, i)
@@ -82,10 +82,10 @@ def coords_to_json(houses):  # формируем таблицу из адрес
             return geocode
 
 
-def check_count(houses):
+def check_count(house_numbers):
     count = 0
     for a in range(Start_from, End - 1):
-        for lv1 in houses[a].values():
+        for lv1 in house_numbers[a].values():
             if isinstance(lv1, list):
                 count += len(lv1)
             else:

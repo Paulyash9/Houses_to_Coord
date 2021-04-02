@@ -49,6 +49,6 @@ def check_count():
 
 if __name__ == '__main__':
     Start_from = 0
-    End = 23
+    End = 522
     print(check_count())
-    # print(all_count())
+    print(all_count())
