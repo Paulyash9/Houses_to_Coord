@@ -29,6 +29,8 @@ def region_and_links() -> tuple:
     for settlement, settlement_url in urls.items():
         if check_file(settlement, file):
             url_list.pop(settlement)
+    print(f'Регион: {region}'
+          f'Общее количество районов и городов: {len(url_list)}')
 
     return region, url_list
 
@@ -50,6 +52,7 @@ def get_houses(soup: BeautifulSoup) -> list or bool:
                                          "> tr "
                                          "> td:nth-child(2) "
                                          "> a")]
+    house = list(set(house))  # удаляем дубликаты
     return house if len(house) > 0 else False
 
 
@@ -131,7 +134,7 @@ def save_file(data, file):
 
 
 @timeit
-def make_all():
+def main():
     # 1. preparing and checking exists data
     region, url_list = region_and_links()  # get region name and list of first URLs
     file = f'parsed {region}.json'
@@ -150,16 +153,4 @@ def make_all():
 
 
 if __name__ == '__main__':
-    make_all()
-
-""" 
-TEST # 1
-url = 'https://xn--80ap2aj.xn--80asehdb/4c2dd563-c3af-45ad-9a8f-2959de8383f0/' Кош-Агачский Район, Алтай респ
-Session(non-refactored): Выполнено за 0:01:34.670842
-Asyncio: Выполнено за 0:00:21.522011
-
-TEST # 2
-url = 'https://xn--80ap2aj.xn--80asehdb/c2deb16a-0330-4f05-821f-1d09c93331e6/' Санкт-Петербург Город
-Session(non-refactored): Выполнено за 0:21:43.494318
-Asyncio: Выполнено за 0:03:03.541377
-"""
+    main()
