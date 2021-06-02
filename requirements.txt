@@ -32,7 +32,7 @@ requests==2.23.0
 six==1.14.0
 soupsieve==2.0.1
 typing-extensions==3.7.4.3
-urllib3==1.25.9
+urllib3==1.26.5
 webencodings==0.5.1
 xlrd==1.2.0
 yarl==1.6.3
