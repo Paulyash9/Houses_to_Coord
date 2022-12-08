@@ -6,7 +6,7 @@ attrs==20.3.0
 beautifulsoup4==4.9.1
 branca==0.4.1
 bs4==0.0.1
-certifi==2020.4.5.1
+certifi==2022.12.7
 cffi==1.14.5
 chardet==3.0.4
 et-xmlfile==1.0.1
